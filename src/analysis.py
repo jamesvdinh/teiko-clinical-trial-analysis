@@ -6,6 +6,11 @@ import streamlit as st
 from scipy.stats import mannwhitneyu
 
 DB_PATH = Path(__file__).parent.parent / "clinical_trials.db"
+SQL_DIR = Path(__file__).parent.parent / "sql"
+
+
+def _load_query(filename: str) -> str:
+    return (SQL_DIR / filename).read_text()
 CELL_POPULATIONS = ["b_cell", "cd8_t_cell",
                     "cd4_t_cell", "nk_cell", "monocyte"]
 CELL_LABELS = {
@@ -22,18 +27,7 @@ SIGNIFICANCE_THRESHOLD = 0.05
 @st.cache_data
 def load_data() -> pd.DataFrame:
     with sqlite3.connect(DB_PATH) as conn:
-        df = pd.read_sql_query(
-            """
-            SELECT sample_id, subject_id, response,
-                   b_cell, cd8_t_cell, cd4_t_cell, nk_cell, monocyte
-            FROM clinical_trial_observations
-            WHERE treatment = 'miraclib'
-              AND sample_type = 'PBMC'
-              AND condition = 'melanoma'
-              AND response IS NOT NULL
-            """,
-            conn,
-        )
+        df = pd.read_sql_query(_load_query("miraclib_melanoma_pbmc.sql"), conn)
 
     total = df[CELL_POPULATIONS].sum(axis=1)
     for col in CELL_POPULATIONS:
@@ -45,17 +39,7 @@ def load_data() -> pd.DataFrame:
 @st.cache_data
 def load_baseline_data() -> pd.DataFrame:
     with sqlite3.connect(DB_PATH) as conn:
-        return pd.read_sql_query(
-            """
-            SELECT sample_id, project_id, subject_id, sex, response
-            FROM clinical_trial_observations
-            WHERE treatment = 'miraclib'
-              AND sample_type = 'PBMC'
-              AND condition = 'melanoma'
-              AND time_from_treatment_start = 0
-            """,
-            conn,
-        )
+        return pd.read_sql_query(_load_query("miraclib_melanoma_pbmc_baseline.sql"), conn)
 
 
 def compute_statistics(df: pd.DataFrame) -> pd.DataFrame:

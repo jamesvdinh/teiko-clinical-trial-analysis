@@ -27,9 +27,11 @@ col1.metric("Total Samples", len(df))
 col2.metric("Responders", int((df["response"] == "yes").sum()))
 col3.metric("Non-Responders", int((df["response"] == "no").sum()))
 
+# Boxplots
 st.plotly_chart(build_boxplot(df), use_container_width=True)
 
-# Boxplots
+st.divider()
+# Statistical summary
 st.subheader("Statistical Summary")
 st.markdown(
     f"Significant difference defined as p < {SIGNIFICANCE_THRESHOLD} "
@@ -101,6 +103,8 @@ with right:
         use_container_width=True,
         hide_index=True,
     )
+
+st.divider()
 
 # Raw data
 with st.expander("Raw data"):
