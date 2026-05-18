@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS clinical_trial_observations (
+DROP TABLE IF EXISTS clinical_trial_observations;
+
+CREATE TABLE clinical_trial_observations (
     sample_id TEXT NOT NULL PRIMARY KEY,
     project_id TEXT NOT NULL,
     subject_id TEXT NOT NULL,
