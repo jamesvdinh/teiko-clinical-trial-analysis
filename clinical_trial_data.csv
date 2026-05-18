@@ -1,0 +1,6 @@
+participant_id,trial_arm,visit_date,immune_cell_type,cell_count,biomarker_level,adverse_event
+P001,Treatment,2025-01-10,CD4_T_Cell,1020,2.31,
+P002,Control,2025-01-10,NK_Cell,870,1.95,Mild fatigue
+P003,Treatment,2025-01-11,CD8_T_Cell,940,2.74,
+P001,Treatment,2025-02-10,NK_Cell,910,2.08,Injection site pain
+P002,Control,2025-02-10,CD4_T_Cell,995,1.88,
