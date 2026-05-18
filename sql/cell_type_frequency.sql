@@ -19,7 +19,7 @@ unpivoted AS (
     SELECT sample_id, total_count, 'nk_cell' AS population, nk_cell AS count FROM totals
     UNION ALL
     SELECT sample_id, total_count, 'monocyte' AS population, monocyte AS count FROM totals
-)\
+)
 SELECT
     sample_id AS sample,
     total_count,
