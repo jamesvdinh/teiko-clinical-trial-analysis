@@ -79,7 +79,7 @@ def main():
     parser.add_argument("--db_path", type=Path, default=DIR_PATH.parent /
                         "clinical_trials.db", help="Path to the SQLite database file.")
     parser.add_argument("--schema_path", type=Path, default=DIR_PATH.parent /
-                        "schemas" / "schema.sql", help="Path to the SQL schema file.")
+                        "sql" / "schema.sql", help="Path to the SQL schema file.")
     parser.add_argument("--csv_path", type=Path, default=DIR_PATH.parent /
                         "data" / "cell-count.csv", help="Path to the CSV data file.")
 
