@@ -60,46 +60,39 @@ st.caption("Miraclib · melanoma · PBMC · time from treatment start = 0")
 
 baseline_df = load_baseline_data()
 
+# Filters
+f_col1, f_col2 = st.columns(2)
+sex_options = sorted(baseline_df["sex"].dropna().unique())
+response_options = sorted(baseline_df["response"].dropna().unique())
+
+selected_sex = f_col1.multiselect("Sex", sex_options, default=sex_options)
+selected_response = f_col2.multiselect("Response", response_options, default=response_options)
+
+filtered = baseline_df[
+    baseline_df["sex"].isin(selected_sex) &
+    baseline_df["response"].isin(selected_response)
+]
+
 b_col1, b_col2, b_col3 = st.columns(3)
-b_col1.metric("Baseline Samples", len(baseline_df))
-b_col2.metric("Subjects", baseline_df["subject_id"].nunique())
-b_col3.metric("Projects", baseline_df["project_id"].nunique())
+b_col1.metric("Samples", len(filtered))
+b_col2.metric("Subjects", filtered["subject_id"].nunique())
+b_col3.metric("Projects", filtered["project_id"].nunique())
 
-left, mid, right = st.columns(3)
+# Aggregate stats
+st.subheader("Average Cell Counts")
+agg = filtered[CELL_POPULATIONS].mean().rename(CELL_LABELS).reset_index()
+agg.columns = ["Cell Population", "Average Count"]
+agg["Average Count"] = agg["Average Count"].round(2)
+st.dataframe(agg, use_container_width=True, hide_index=True)
 
-with left:
-    st.subheader("Samples per Project")
+# Filtered table
+with st.expander("Filtered samples"):
     st.dataframe(
-        baseline_df.groupby("project_id")
-        .size()
-        .reset_index(name="Samples")
-        .rename(columns={"project_id": "Project"}),
-        use_container_width=True,
-        hide_index=True,
-    )
-
-with mid:
-    st.subheader("Subjects by Response")
-    st.dataframe(
-        baseline_df.dropna(subset=["response"])
-        .drop_duplicates("subject_id")
-        .groupby("response")
-        .size()
-        .reset_index(name="Subjects")
-        .rename(columns={"response": "Response"})
-        .replace({"yes": "Responder", "no": "Non-Responder"}),
-        use_container_width=True,
-        hide_index=True,
-    )
-
-with right:
-    st.subheader("Subjects by Sex")
-    st.dataframe(
-        baseline_df.drop_duplicates("subject_id")
-        .groupby("sex")
-        .size()
-        .reset_index(name="Subjects")
-        .rename(columns={"sex": "Sex"}),
+        filtered.rename(columns={
+            "sample_id": "Sample", "project_id": "Project",
+            "subject_id": "Subject", "sex": "Sex", "response": "Response",
+            **{p: CELL_LABELS[p] for p in CELL_POPULATIONS},
+        }),
         use_container_width=True,
         hide_index=True,
     )
