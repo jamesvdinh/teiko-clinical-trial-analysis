@@ -1,4 +1,4 @@
-# Teiko Clinical Trial Analysis
+# Immune Cell Clinical Trial Analysis
 
 Immune cell population analysis on clinical trial data, with an interactive Streamlit dashboard.
 
